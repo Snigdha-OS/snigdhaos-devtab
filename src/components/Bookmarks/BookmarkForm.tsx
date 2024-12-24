@@ -1,21 +1,51 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Trash } from 'lucide-react'; // Import Trash icon for delete
 import { motion } from 'framer-motion';
 import type { Bookmark } from '../../types';
 
 interface BookmarkFormProps {
   onAdd: (bookmark: Omit<Bookmark, 'id'>) => void;
+  onUpdate: (bookmark: Bookmark) => void;
   onClose: () => void;
+  existingBookmark?: Bookmark | null; // Allowing null as a valid value
+  onDelete?: (id: string) => void; // Add onDelete as an optional prop
 }
 
-export function BookmarkForm({ onAdd, onClose }: BookmarkFormProps) {
-  const [title, setTitle] = useState('');
-  const [url, setUrl] = useState('');
+export function BookmarkForm({
+  onAdd,
+  onUpdate,
+  onClose,
+  existingBookmark,
+  onDelete,
+}: BookmarkFormProps) {
+  const [title, setTitle] = useState(existingBookmark?.title || '');
+  const [url, setUrl] = useState(existingBookmark?.url || '');
+
+  useEffect(() => {
+    // If there's an existing bookmark, set its title and URL
+    if (existingBookmark) {
+      setTitle(existingBookmark.title);
+      setUrl(existingBookmark.url);
+    }
+  }, [existingBookmark]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title && url) {
-      onAdd({ title, url });
+      if (existingBookmark) {
+        // If editing an existing bookmark, update the bookmark
+        onUpdate({ ...existingBookmark, title, url });
+      } else {
+        // Otherwise, add a new bookmark
+        onAdd({ title, url });
+      }
+      onClose();
+    }
+  };
+
+  const handleDelete = () => {
+    if (existingBookmark && onDelete) {
+      onDelete(existingBookmark.id); // Delete the existing bookmark
       onClose();
     }
   };
@@ -28,7 +58,7 @@ export function BookmarkForm({ onAdd, onClose }: BookmarkFormProps) {
     >
       <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-white">Add Bookmark</h3>
+          <h3 className="text-xl font-bold text-white">{existingBookmark ? 'Edit Bookmark' : 'Add Bookmark'}</h3>
           <button onClick={onClose} className="text-white/50 hover:text-white">
             <X />
           </button>
@@ -59,9 +89,18 @@ export function BookmarkForm({ onAdd, onClose }: BookmarkFormProps) {
             className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg text-white 
                      font-medium transition-colors"
           >
-            Add Bookmark
+            {existingBookmark ? 'Save Changes' : 'Add Bookmark'}
           </button>
         </form>
+        {existingBookmark && onDelete && (
+          <button
+            onClick={handleDelete}
+            className="w-full py-2 bg-red-500 hover:bg-red-600 rounded-lg text-white 
+                     font-medium mt-4 transition-colors"
+          >
+            <Trash className="inline mr-2" /> Delete Bookmark
+          </button>
+        )}
       </div>
     </motion.div>
   );
