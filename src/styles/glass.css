@@ -1,0 +1,4 @@
+.glass-effect {
+  @apply bg-white/10 backdrop-blur-lg border border-[#6495ED]/20;
+  box-shadow: 0 8px 32px 0 rgba(100, 149, 237, 0.15);
+}
