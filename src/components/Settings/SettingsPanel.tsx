@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Settings as SettingsIcon, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserSettings } from './UserSettings';
@@ -21,6 +21,33 @@ function SettingsSection({ children }: SettingsSectionProps) {
 
 export function SettingsPanel() {
   const [isOpen, setIsOpen] = React.useState(false);
+  const { settings, updateSettings } = useSettings(); // Assuming this hook is for managing settings
+  const panelRef = useRef<HTMLDivElement | null>(null); // Explicitly typing the panelRef
+
+  // Close the settings panel if the user clicks outside of it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Function to handle saving settings
+  const handleSaveSettings = () => {
+    // Save settings logic here (e.g., persist to localStorage or backend)
+    console.log('Settings saved:', settings);
+  };
 
   return (
     <>
@@ -45,6 +72,7 @@ export function SettingsPanel() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              ref={panelRef}
               className="fixed right-0 top-0 h-full w-96 bg-gray-900 p-6 overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-6">
@@ -69,6 +97,16 @@ export function SettingsPanel() {
                 <SettingsSection>
                   <FontSettings />
                 </SettingsSection>
+              </div>
+
+              {/* Save Settings Button */}
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={handleSaveSettings}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Save Settings
+                </button>
               </div>
             </motion.div>
           </motion.div>

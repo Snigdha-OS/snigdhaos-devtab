@@ -13,12 +13,12 @@ const DEFAULT_SETTINGS: UserSettings = {
     fontSize: 16,
   },
   user: {
-    name: 'Guest',
+    name: 'Snigdha OS User',
   },
   devto: {
     username: 'snigdhaos',
     enabled: true,
-    maxArticles: 5,
+    maxArticles: 9,
   },
   layout: {
     showWeather: true,
@@ -52,7 +52,11 @@ export function useSettings() {
   }, [settings]);
 
   const updateSettings = (updates: Partial<UserSettings>) => {
-    setSettings(current => ({ ...current, ...updates }));
+    setSettings(current => {
+      const newSettings = { ...current, ...updates };
+      localStorage.setItem('user-settings', JSON.stringify(newSettings));  // Save updated settings
+      return newSettings;  // Update state to trigger UI re-render
+    });
   };
 
   return { settings, updateSettings };
