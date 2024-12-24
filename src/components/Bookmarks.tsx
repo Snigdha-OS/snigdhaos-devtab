@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Globe, Plus } from 'lucide-react';
+import { Globe, Plus, Trash } from 'lucide-react';  // Import Trash icon
 import { motion } from 'framer-motion';
 import type { Bookmark } from '../types';
 
@@ -17,6 +17,10 @@ export function Bookmarks() {
     }
   };
 
+  const deleteBookmark = (id: string) => {
+    setBookmarks(bookmarks.filter(bookmark => bookmark.id !== id));  // Remove bookmark by id
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -24,7 +28,9 @@ export function Bookmarks() {
       className="bg-white/10 backdrop-blur-lg rounded-xl p-6"
     >
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-white">Bookmarks</h2>
+        <div className="flex-1 flex justify-center">
+          <h2 className="text-xl font-bold text-white">Bookmarks</h2>
+        </div>
         <button
           onClick={addBookmark}
           className="p-2 hover:bg-white/20 rounded-lg transition-colors"
@@ -34,16 +40,19 @@ export function Bookmarks() {
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {bookmarks.map((bookmark) => (
-          <motion.a
+          <motion.div
             key={bookmark.id}
-            href={bookmark.url}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+            className="flex items-center gap-2 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors relative"
           >
             <Globe className="w-4 h-4 text-white" />
             <span className="text-white truncate">{bookmark.title}</span>
-          </motion.a>
+            <button
+              onClick={() => deleteBookmark(bookmark.id)}
+              className="absolute top-1 right-1 p-1 text-white hover:bg-white/20 rounded-full"
+            >
+              <Trash className="w-4 h-4" />
+            </button>
+          </motion.div>
         ))}
       </div>
     </motion.div>

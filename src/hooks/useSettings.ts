@@ -42,20 +42,27 @@ const DEFAULT_SETTINGS: UserSettings = {
 };
 
 export function useSettings() {
+  // Lazy initialization of state to get initial settings from localStorage or fallback to defaults
   const [settings, setSettings] = useState<UserSettings>(() => {
     const saved = localStorage.getItem('user-settings');
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
   });
 
+  // Effect to save settings to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('user-settings', JSON.stringify(settings));
+    // Avoid saving to localStorage if the settings haven't changed
+    const savedSettings = localStorage.getItem('user-settings');
+    const settingsChanged = JSON.stringify(settings) !== savedSettings;
+    if (settingsChanged) {
+      localStorage.setItem('user-settings', JSON.stringify(settings));
+    }
   }, [settings]);
 
+  // Function to update settings and persist to localStorage
   const updateSettings = (updates: Partial<UserSettings>) => {
     setSettings(current => {
       const newSettings = { ...current, ...updates };
-      localStorage.setItem('user-settings', JSON.stringify(newSettings));  // Save updated settings
-      return newSettings;  // Update state to trigger UI re-render
+      return newSettings;  // Return updated settings to trigger UI re-render
     });
   };
 

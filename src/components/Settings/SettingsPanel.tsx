@@ -1,10 +1,12 @@
 import React, { useRef, useEffect } from 'react';
-import { Settings as SettingsIcon, X } from 'lucide-react';
+import { Settings as SettingsIcon, X, Save } from 'lucide-react'; // Save icon from lucide-react
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserSettings } from './UserSettings';
 import { BackgroundSettings } from './BackgroundSettings';
 import { FontSettings } from './FontSettings';
 import { useSettings } from '../../hooks/useSettings';
+import { toast, ToastContainer } from 'react-toastify'; // Import toast and ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import toast CSS
 
 interface SettingsSectionProps {
   title?: string;
@@ -43,10 +45,14 @@ export function SettingsPanel() {
     };
   }, [isOpen]);
 
-  // Function to handle saving settings
+  // Function to handle saving settings and updating UI
   const handleSaveSettings = () => {
-    // Save settings logic here (e.g., persist to localStorage or backend)
-    console.log('Settings saved:', settings);
+    // Save settings logic
+    updateSettings(settings); // This will update the state and trigger a UI re-render
+    console.log('Settings saved:', settings); // You can log this for debugging
+
+    // Show success toast notification
+    toast.success('Settings have been saved successfully!');
   };
 
   return (
@@ -103,15 +109,19 @@ export function SettingsPanel() {
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={handleSaveSettings}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
                 >
-                  Save Settings
+                  <Save className="w-5 h-5" /> {/* Save icon from lucide-react */}
+                  <span>Save Settings</span>
                 </button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Toast container for displaying notifications */}
+      <ToastContainer />
     </>
   );
 }
