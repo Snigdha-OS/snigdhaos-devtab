@@ -8,7 +8,7 @@ export function Calendar() {
 
   const days = eachDayOfInterval({
     start: startOfMonth(currentDate),
-    end: endOfMonth(currentDate)
+    end: endOfMonth(currentDate),
   });
 
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
@@ -18,50 +18,57 @@ export function Calendar() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/10 backdrop-blur-lg rounded-xl p-6"
+      className="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-lg text-white"
     >
-      <div className="flex justify-between items-center mb-4">
-        <button 
+      {/* Calendar Header */}
+      <div className="flex justify-between items-center mb-6">
+        <button
           onClick={prevMonth}
-          className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+          className="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all"
         >
-          <ChevronLeft className="text-white" />
+          <ChevronLeft className="w-5 h-5 text-white" />
         </button>
-        <h2 className="text-xl font-bold text-white">
+        <h2 className="text-2xl font-semibold tracking-wide">
           {format(currentDate, 'MMMM yyyy')}
         </h2>
-        <button 
+        <button
           onClick={nextMonth}
-          className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+          className="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all"
         >
-          <ChevronRight className="text-white" />
+          <ChevronRight className="w-5 h-5 text-white" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center mb-2">
-        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-          <div key={day} className="text-white/50 text-sm font-medium">
+      {/* Weekdays */}
+      <div className="grid grid-cols-7 gap-2 text-center mb-4">
+        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+          <div key={day} className="text-sm font-medium text-white/70">
             {day}
           </div>
         ))}
       </div>
 
+      {/* Dates */}
       <AnimatePresence mode="wait">
         <motion.div
           key={format(currentDate, 'yyyy-MM')}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          className="grid grid-cols-7 gap-1"
+          exit={{ opacity: 0, x: -50 }}
+          className="grid grid-cols-7 gap-2"
         >
-          {days.map(day => (
+          {days.map((day) => (
             <motion.div
               key={format(day, 'yyyy-MM-dd')}
               whileHover={{ scale: 1.1 }}
-              className={`
-                aspect-square flex items-center justify-center rounded-full text-sm
-                ${!isSameMonth(day, currentDate) ? 'text-white/30' : 'text-white'}
-                ${isToday(day) ? 'bg-white/20 font-bold' : ''}
+              className={`aspect-square flex items-center justify-center rounded-lg text-sm font-medium 
+                transition-all duration-200 cursor-pointer
+                ${
+                  !isSameMonth(day, currentDate)
+                    ? 'text-white/40 bg-transparent'
+                    : 'text-white bg-white/10'
+                }
+                ${isToday(day) ? 'bg-purple-500 text-white font-bold shadow-lg' : ''}
               `}
             >
               {format(day, 'd')}
