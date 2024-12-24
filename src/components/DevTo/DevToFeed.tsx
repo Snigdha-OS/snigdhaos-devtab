@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Clock, Heart, MessageCircle } from 'lucide-react';
+import { Clock, Heart, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useDevToFeed } from '../../hooks/useDevToFeed';
 import { useSettings } from '../../hooks/useSettings';
@@ -29,17 +29,6 @@ export function DevToFeed() {
             className="block bg-white/5 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:transform hover:scale-105"
             whileHover={{ y: -5 }}
           >
-            <div className="aspect-video bg-purple-900/50 flex items-center justify-center">
-              {article.cover_image ? (
-                <img 
-                  src={article.cover_image} 
-                  alt={article.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <BookOpen className="w-12 h-12 text-white/30" />
-              )}
-            </div>
             <div className="p-4">
               <h3 className="text-white font-medium text-lg mb-2 line-clamp-2">
                 {article.title}
